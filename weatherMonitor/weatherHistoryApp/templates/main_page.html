@@ -12,19 +12,70 @@
     <meta name="author" content="">
     <title>Weather Monitor</title>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+
     <script src="{%static 'bootstrap-3.3.6-dist/js/bootstrap.min.js' %}"></script>
     <script src="{%static 'bootstrap-3.3.6-dist/js/ie10-viewport-bug-workaround.js' %}"></script>
     <script src="{%static 'bootstrap-3.3.6-dist/js/moment.js' %}"></script>
     <script src="{%static 'bootstrap-3.3.6-dist/js/datetimepicker.js' %}"></script>
     <script src="{%static 'bootstrap-3.3.6-dist/js/picker.js' %}"></script>
     <link href="{% static 'bootstrap-3.3.6-dist/css/datetimepicker.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
 
   	<!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap-3.3.6-dist/css/bootstrap.min.css' %}" rel="stylesheet">
 
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+    <script src="{% static 'morris-js/morris.js' %}"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.min.js"></script>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/prettify/r224/prettify.min.css">
+    <link rel="stylesheet" href="{% static 'morris-js/morris.css' %}">
+
 </head>
+
+<script>
+
+
+
+    /*
+    $(function () {
+
+    // AREA CHART
+
+        var line = new Morris.Line({
+      element: 'line-chart',
+      resize: true,
+      data: [
+        {y: '2011 Q1', item1: 2666},
+        {y: '2011 Q2', item1: 2778},
+        {y: '2011 Q3', item1: 4912},
+        {y: '2011 Q4', item1: 3767},
+        {y: '2012 Q1', item1: 6810},
+        {y: '2012 Q2', item1: 5670},
+        {y: '2012 Q3', item1: 4820},
+        {y: '2012 Q4', item1: 15073},
+        {y: '2013 Q1', item1: 10687},
+        {y: '2013 Q2', item1: 8432}
+      ],
+      xkey: 'y',
+      ykeys: ['item1'],
+      labels: ['Item 1'],
+      lineColors: ['#3c8dbc'],
+      hideHover: 'auto'
+    });
+
+
+
+
+           });
+
+    $(function () {
+});
+
+    */
+</script>
 
 <style>
     .navbar-brand,
@@ -47,7 +98,7 @@
         left: 0;
         text-align: center;
         margin: auto;
-        font-size:38px;
+        font-size:32px;
         padding-bottom: 5px;
     }
 
@@ -55,6 +106,42 @@
     {
         padding-top: 5px;
     }
+
+    .loader
+    {
+
+    }
+
+    .glyphicon.spinning {
+    animation: spin 1s infinite linear;
+        -webkit-animation: spin2 1s infinite linear;
+    }
+
+
+    @keyframes spin {
+        from { transform: scale(1) rotate(0deg); }
+        to { transform: scale(1) rotate(360deg); }
+    }
+
+    @-webkit-keyframes spin2 {
+        from { -webkit-transform: rotate(0deg); }
+        to { -webkit-transform: rotate(360deg); }
+    }
+
+    .title_station
+    {
+        text-align: center;
+        font-size:30px;
+        margin-top:20px;
+    }
+
+    .title_date
+    {
+        text-align: center;
+        font-size:18px;
+        margin-bottom:20px;;
+    }
+
 </style>
 
 <body>
@@ -75,7 +162,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
         <div class="navbar-center navbar-brand">
-            <p style = "color:#000066;">Weather History</p>
+            <p style = "color:#000066;">WEATHER &nbsp;HISTORY</p>
         </div>
 
       <ul class="nav navbar-nav navbar-right">
@@ -93,6 +180,301 @@
     </div>
   </div>
 </nav>
+
+<div class = "row" style = "margin-bottom: 0px; margin-top:30px;">
+
+    <div class = "col s2 m2 l2"></div>
+
+    <div class = "col s10 m10 l10">
+    <div class = "container" style = "text-align: center;">
+        <div class="col-md-2"> STATION / CITY </div>
+        <div class="col-md-3"> START DATE </div>
+        <div class="col-md-3"> FINAL DATE </div>
+        <div class="col-md-2"> PARAMETER </div>
+    </div>
+    </div>
+
+</div>
+
+<div class = "row" >
+
+    <div class = "col s2 m2 l2"></div>
+
+    <div class = "col s10 m10 l10" style = "margin-top:10px; margin-bottom:20px;">
+
+        <div class = "container inline">
+
+                <div class="col-md-2 form-group">
+                    <select class="form-control" id="station" name = "station" style = "width:100%">
+                    <option>Delhi</option>
+                    <option>Mountain View, CA</option>
+                  </select>
+
+                </div>
+
+                <div class="col-md-3 form-group">
+          		<div class='input-group date' id='datetimepicker1' name = "date_begin">
+	                <input type='text' name="stdate" class="form-control" />
+	                <span class="input-group-addon">
+	                    <span class="glyphicon glyphicon-calendar"></span>
+	                </span>
+	            </div>
+          	</div>
+
+
+                <div class="col-md-3 form-group">
+
+          		<div class='input-group date' id='datetimepicker2' name = "date_end">
+	                <input type='text' name="stdate" class="form-control" />
+	                <span class="input-group-addon">
+	                    <span class="glyphicon glyphicon-calendar"></span>
+	                </span>
+	            </div>
+          	</div>
+
+                <div class="col-md-2 form-group">
+                 <select class="form-control" id="parameter" name = "param" style = "width:100%">
+                    <option>Temperature</option>
+                    <option>Humidity</option>
+                  </select>
+                 </div>
+
+                <div class="col-md-2 form-group">
+
+                    <button type="button" id="load-btn" data-loading-text="Loading..." class="btn btn-primary" autocomplete="off">
+                        SUBMIT
+                    </button>
+
+                    <button class="btn btn-warning">
+                                <span class="glyphicon glyphicon-refresh spinning"></span> Loading...
+                            </button>
+                </div>
+
+        </div>
+
+
+
+    </div>
+
+</div>
+
+<div class = "row" style = "height:600px;">
+
+    <div class = "col s0 m1 l1">
+    </div>
+
+    <div class = "col s12 m10 l10">
+
+        <div class="container">
+              <ul class="nav nav-tabs">
+                <li class="active" ><a data-toggle="tab" href="#menu0" id = "btn-line">LINE GRAPH</a></li>
+                <li><a data-toggle="tab" href="#menu1" id = "btn-bar">BAR GRAPH</a></li>
+                <li><a data-toggle="tab" href="#menu2" id = "btn-area">DATA TABLE</a></li>
+              </ul>
+
+              <div class="tab-content">
+
+                <div id="menu0" class="tab-pane fade in active" name = 'line'>
+                  <div class = "title_station">
+                      NEW DELHI
+                  </div>
+                    <div class = "title_date">
+                      13/06/2016 - 15/06/2016
+                  </div>
+                  <div id = "line-chart" name = 'line'></div>
+                </div>
+
+                <div id="menu1" class="tab-pane fade" name = 'bar'>
+                  <div class = "title_station">
+                      NEW DELHI
+                  </div>
+                    <div class = "title_date">
+                      13/06/2016 - 15/06/2016
+                  </div>
+                   <div id = "bar-chart"></div>
+                </div>
+
+                  <div id="menu2" class="tab-pane fade" name = 'area'>
+                  <div class = "title_station">
+                      NEW DELHI
+                  </div>
+                    <div class = "title_date">
+                      13/06/2016 - 15/06/2016
+                  </div>
+                  <div id = "revenue-chart"></div>
+                </div>
+
+              </div>
+    </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function data() {
+        //TEST DATA
+  var ret = [
+      { y: '2006', a: 100, b: 90 },
+      { y: '2007', a: 75,  b: 65 },
+      { y: '2008', a: 50,  b: 40 },
+      { y: '2009', a: 75,  b: 65 },
+      { y: '2010', a: 50,  b: 40 },
+      { y: '2011', a: 75,  b: 65 },
+      { y: '2012', a: 100, b: 90 }
+    ];
+
+  return ret;
+};
+
+    window.name_to_ID = {}; // Map between station name and ID
+    window.name_to_url = {}; // Map between station Name and URL
+    window.station_data = []; // Data of the station required
+
+    name_to_ID['abc'] = 1;
+    console.log(name_to_ID['abc']);
+
+
+$(function(){
+
+        plotGraph('line');
+
+        getData();
+
+        dateData();
+
+    });
+
+function dateData(x)
+{
+    $.ajax({
+      type: "GET",
+      dataType: 'json',
+      url: "http://api.wunderground.com/api/51e0f3ca75af02f9/history_" + x + "/q/India/Gurgaon.json",
+      data: {}
+        })
+    .done(function( data ) {
+      console.log(data);
+
+        if ('error' in data.response)
+        {
+            alert("Error! : " + data.response.error.description);
+        }
+        else
+        {
+            var maxTemp = data.history.dailysummary[0].maxtempm;
+            var minTemp = data.history.dailysummary[0].mintempm;
+            var avgTemp = data.history.dailysummary[0].meantempm;
+
+            station_data.push({maxTemp, minTemp, avgTemp});
+        }
+
+    })
+    .fail(function() {
+      alert( "error occured" );
+    });
+
+}
+
+function getData()
+ {
+     var station = $("#station").val();
+     var startDate = $("#datetimepicker1").val();
+     var endDate = $("#datetimepicker1").val();
+     var Parameter = $("#parameter").val();
+     console.log(startDate);
+
+     if(startDate == "" || endDate == "")
+     {
+         alert("Please enter the complete form data!");
+         return;
+     }
+
+      var now = new Date();
+      var daysOfYear = [];
+      for (var d = new Date(2012, 0, 1); d <= now; d.setDate(d.getDate() + 1)) {
+          daysOfYear.push(new Date(d));
+        }
+ }
+
+function plotGraph(x)
+{
+        if(x == 'line')
+        {
+            $('#line-chart').empty();
+
+            var line = new Morris.Line({
+                element: 'line-chart',
+                resize: true,
+                data:data(),
+                xkey: 'y',
+                ykeys: ['a', 'b'],
+                labels: ['a', 'b'],
+                lineColors: ['#3c8dbc'],
+                hideHover: 'auto'
+            });
+
+            //line.setData(data());
+        }
+        else if (x == 'bar')
+        {
+            $('#bar-chart').empty();
+
+            var line = new Morris.Bar({
+                element: 'bar-chart',
+                resize: true,
+                data:data(),
+                xkey: 'y',
+                ykeys: ['a'],
+                labels: ['b'],
+                lineColors: ['#3c8dbc'],
+                hideHover: 'auto'
+            });
+
+            //line.setData(data());
+        }
+        else if(x == 'area')
+        {
+            $('#revenue-chart').empty();
+
+            var line = new Morris.Area({
+                element: 'revenue-chart',
+                resize: true,
+                data:data(),
+                xkey: 'y',
+                ykeys: ['a'],
+                labels: ['b'],
+                lineColors: ['#3c8dbc'],
+                hideHover: 'auto'
+            });
+        }
+}
+
+    $("#load-btn").on('click', function(){
+
+        var $btn = $(this).button('loading');
+
+            getData();
+
+        $btn.button('reset');
+    });
+
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+
+    var target = $(e.target).attr("href") // activated tab
+    console.log(target);
+    console.log($(target).attr("name"));
+
+    var graph_type = $(target).attr("name");
+
+    plotGraph(graph_type);
+  //alert(target);
+});
+
+</script>
 
 
 </body>
