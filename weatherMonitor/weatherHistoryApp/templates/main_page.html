@@ -139,7 +139,12 @@
     {
         text-align: center;
         font-size:18px;
-        margin-bottom:20px;;
+        margin-bottom:16px;
+    }
+    .title_params
+    {
+        text-align: center;
+        font-size:20px;
     }
 
 </style>
@@ -167,13 +172,17 @@
 
       <ul class="nav navbar-nav navbar-right">
 
+          <li style = "margin-top : 10px; margin-right : 15px;">
+              <button type="button" class="btn btn-info" onclick="$('#addStation').modal({'backdrop': 'static'});">ADD NEW STATION</button>
+          </li>
+
         <li class="dropdown" style = "font-size: large;">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Options <span class="caret"></span></a>
           <ul class="dropdown-menu" style = "font-size: medium;">
-            <li><a href="#">About</a></li>
+            <li><a data-toggle="modal" data-target="#about_modal">About</a></li>
             <li><a target="_blank" href="https://github.com/ssrmansit55/Projects">Project Source</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="logout">Logout</a></li>
           </ul>
         </li>
       </ul>
@@ -206,15 +215,16 @@
 
                 <div class="col-md-2 form-group">
                     <select class="form-control" id="station" name = "station" style = "width:100%">
-                    <option>Delhi</option>
-                    <option>Mountain View, CA</option>
+                        {% for y in stations %}
+                    <option value = '{{ y }}'>{{ y }}</option>
+                        {% endfor %}
                   </select>
 
                 </div>
 
                 <div class="col-md-3 form-group">
           		<div class='input-group date' id='datetimepicker1' name = "date_begin">
-	                <input type='text' name="stdate" class="form-control" />
+	                <input type='text' name="stdate" class="form-control" id = "date1"/>
 	                <span class="input-group-addon">
 	                    <span class="glyphicon glyphicon-calendar"></span>
 	                </span>
@@ -225,7 +235,7 @@
                 <div class="col-md-3 form-group">
 
           		<div class='input-group date' id='datetimepicker2' name = "date_end">
-	                <input type='text' name="stdate" class="form-control" />
+	                <input type='text' name="stdate" class="form-control" id = "date2" />
 	                <span class="input-group-addon">
 	                    <span class="glyphicon glyphicon-calendar"></span>
 	                </span>
@@ -245,9 +255,6 @@
                         SUBMIT
                     </button>
 
-                    <button class="btn btn-warning">
-                                <span class="glyphicon glyphicon-refresh spinning"></span> Loading...
-                            </button>
                 </div>
 
         </div>
@@ -266,42 +273,38 @@
     <div class = "col s12 m10 l10">
 
         <div class="container">
+
               <ul class="nav nav-tabs">
-                <li class="active" ><a data-toggle="tab" href="#menu0" id = "btn-line">LINE GRAPH</a></li>
-                <li><a data-toggle="tab" href="#menu1" id = "btn-bar">BAR GRAPH</a></li>
-                <li><a data-toggle="tab" href="#menu2" id = "btn-area">DATA TABLE</a></li>
+                <li class="active" ><a data-toggle="tab" href="#menu0" id = "btn-line">LINE CHART</a></li>
+                <li><a data-toggle="tab" href="#menu1" id = "btn-bar">BAR CHART</a></li>
+                <li><a data-toggle="tab" href="#menu2" id = "btn-area">AREA CHART</a></li>
               </ul>
+
+            <div class = "title_station">
+            </div>
+            <div class = "title_params">
+            </div>
+            <div class = "title_date">
+             </div>
 
               <div class="tab-content">
 
                 <div id="menu0" class="tab-pane fade in active" name = 'line'>
-                  <div class = "title_station">
-                      NEW DELHI
-                  </div>
-                    <div class = "title_date">
-                      13/06/2016 - 15/06/2016
-                  </div>
+
                   <div id = "line-chart" name = 'line'></div>
+
                 </div>
 
                 <div id="menu1" class="tab-pane fade" name = 'bar'>
-                  <div class = "title_station">
-                      NEW DELHI
-                  </div>
-                    <div class = "title_date">
-                      13/06/2016 - 15/06/2016
-                  </div>
+
                    <div id = "bar-chart"></div>
+
                 </div>
 
                   <div id="menu2" class="tab-pane fade" name = 'area'>
-                  <div class = "title_station">
-                      NEW DELHI
-                  </div>
-                    <div class = "title_date">
-                      13/06/2016 - 15/06/2016
-                  </div>
+
                   <div id = "revenue-chart"></div>
+
                 </div>
 
               </div>
@@ -313,142 +316,187 @@
 </div>
 
 
+<div class="modal fade" id="addStation" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title">Add New Station</h4>
+            </div>
+            <div class="modal-body">
+                <form id = "form_station">
+                    <table>
+                        <colgroup>
+                            <col style="width:35%">
+                            <col style="width:65%">
+                        </colgroup>
+                        <tr>
+                            <td>
+                                NAME
+                            </td>
+                            <td>
+                                <input class = "form-control" pattern="[A-Za-z ]{1,50}" id = "station_name" required><br>
+                            </td>
+                        </tr>
+                        <tr style = "height:20px;">
+                            <td></td>
+                            <td style = "font-size:12px;">
+                                (upto 50 characters long)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                ID
+                            </td>
+                            <td>
+                                <input class = "form-control" pattern="[0-9]{1,8}" id = "station_id" required><br>
+                            </td>
+                        </tr>
+                        <tr style = "height:20px;">
+                            <td></td>
+                            <td style = "font-size:12px;">
+                                (upto 8 digits long)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                URL SUFFIX
+                            </td>
+                            <td>
+                                <input class = "form-control" pattern="^[A-Za-z]{1,}/[A-Za-z_]{1,}$" id = "station_urlsuffix" required><br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                            </td>
+                            <td style = "font-size:12px;">
+                                e.g. India/Gurgaon for Gurgaon <br>
+                                Refer to <a target="_blank" href = "https://www.wunderground.com/weather/api/d/docs?d=data/history&MR=1">this link</a>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div style = "margin-left:100px;"><br><br>
+                        <button type="submit" class="btn btn-primary" id = "station_submit" >Submit</button>
+                    </div><br>
+
+                    <div class="alert alert-success" role="alert" style = "text-align : center; display:none;" id = "success_box">
+                        SUCCESS! The station was successfully saved!
+                    </div>
+                    <div class="alert alert-danger" role="alert" style=" display:none; " id = "error_box">
+                        <p id = "error_msg" style = "text-align : center;"></p>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="about_modal" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">About</h4>
+        </div>
+        <div class="modal-body">
+          <p style = "text-align: center;">
+
+              Weather Monitoring dashboard to help monitor and study historical weather data for various different cities / stations.
+              Developed in Python / Django.<br>
+              Developed by : <br>
+              Saurabh Sharma <br>
+
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+
 <script>
 
-    function data() {
-        //TEST DATA
-  var ret = [
-      { y: '2006', a: 100, b: 90 },
-      { y: '2007', a: 75,  b: 65 },
-      { y: '2008', a: 50,  b: 40 },
-      { y: '2009', a: 75,  b: 65 },
-      { y: '2010', a: 50,  b: 40 },
-      { y: '2011', a: 75,  b: 65 },
-      { y: '2012', a: 100, b: 90 }
-    ];
-
-  return ret;
-};
-
-    window.name_to_ID = {}; // Map between station name and ID
     window.name_to_url = {}; // Map between station Name and URL
     window.station_data = []; // Data of the station required
+    window.graph_type = 'line'; // graph type to plot
 
-    name_to_ID['abc'] = 1;
-    console.log(name_to_ID['abc']);
+    {% for x in res %}
 
+        window.name_to_url['{{ x.name }}'] = '{{ x.url_suffix }}'
 
-$(function(){
+    {% endfor %}
 
-        plotGraph('line');
-
-        getData();
-
-        dateData();
-
-    });
-
-function dateData(x)
+function plotGraph(type, Parameter)
 {
-    $.ajax({
-      type: "GET",
-      dataType: 'json',
-      url: "http://api.wunderground.com/api/51e0f3ca75af02f9/history_" + x + "/q/India/Gurgaon.json",
-      data: {}
-        })
-    .done(function( data ) {
-      console.log(data);
+        var postUnit;
 
-        if ('error' in data.response)
-        {
-            alert("Error! : " + data.response.error.description);
-        }
-        else
-        {
-            var maxTemp = data.history.dailysummary[0].maxtempm;
-            var minTemp = data.history.dailysummary[0].mintempm;
-            var avgTemp = data.history.dailysummary[0].meantempm;
+        if(Parameter == "Temperature")
+                postUnit = '°C'
+        else if(Parameter == "Humidity")
+                postUnit = '%'
 
-            station_data.push({maxTemp, minTemp, avgTemp});
-        }
-
-    })
-    .fail(function() {
-      alert( "error occured" );
-    });
-
-}
-
-function getData()
- {
-     var station = $("#station").val();
-     var startDate = $("#datetimepicker1").val();
-     var endDate = $("#datetimepicker1").val();
-     var Parameter = $("#parameter").val();
-     console.log(startDate);
-
-     if(startDate == "" || endDate == "")
-     {
-         alert("Please enter the complete form data!");
-         return;
-     }
-
-      var now = new Date();
-      var daysOfYear = [];
-      for (var d = new Date(2012, 0, 1); d <= now; d.setDate(d.getDate() + 1)) {
-          daysOfYear.push(new Date(d));
-        }
- }
-
-function plotGraph(x)
-{
-        if(x == 'line')
+        if(type == 'line')
         {
             $('#line-chart').empty();
 
             var line = new Morris.Line({
                 element: 'line-chart',
                 resize: true,
-                data:data(),
-                xkey: 'y',
-                ykeys: ['a', 'b'],
-                labels: ['a', 'b'],
-                lineColors: ['#3c8dbc'],
-                hideHover: 'auto'
+                data:window.station_data,
+                xkey: 'DATE',
+                ykeys: ['MAX', 'MIN', 'AVG'],
+                labels: ['MAX', 'MIN', 'AVG'],
+                lineColors: ['#7dbe3c','#3c8dbc ','#be3c3c'],
+                hideHover: 'auto',
+                parseTime: false,
+                postUnits : postUnit
             });
 
-            //line.setData(data());
+            //line.setData(window.station_data);
         }
-        else if (x == 'bar')
+        else if (type == 'bar')
         {
             $('#bar-chart').empty();
 
             var line = new Morris.Bar({
                 element: 'bar-chart',
                 resize: true,
-                data:data(),
-                xkey: 'y',
-                ykeys: ['a'],
-                labels: ['b'],
-                lineColors: ['#3c8dbc'],
-                hideHover: 'auto'
+                data:window.station_data,
+                xkey: 'DATE',
+                ykeys: ['MAX', 'MIN', 'AVG'],
+                labels: ['MAX', 'MIN', 'AVG'],
+                lineColors: ['#7dbe3c','#3c8dbc ','#be3c3c'],
+                hideHover: 'auto',
+                parseTime: false,
+                postUnits : postUnit
             });
 
             //line.setData(data());
         }
-        else if(x == 'area')
+        else if(type == 'area')
         {
             $('#revenue-chart').empty();
 
             var line = new Morris.Area({
                 element: 'revenue-chart',
                 resize: true,
-                data:data(),
-                xkey: 'y',
-                ykeys: ['a'],
-                labels: ['b'],
-                lineColors: ['#3c8dbc'],
-                hideHover: 'auto'
+                data:window.station_data,
+                xkey: 'DATE',
+                ykeys: ['MAX', 'MIN', 'AVG'],
+                labels: ['MAX', 'MIN', 'AVG'],
+                lineColors: ['#7dbe3c','#3c8dbc ','#be3c3c'],
+                hideHover: 'auto',
+                parseTime: false,
+                postUnits : postUnit,
+                behaveLikeLine : true
             });
         }
 }
@@ -457,9 +505,129 @@ function plotGraph(x)
 
         var $btn = $(this).button('loading');
 
-            getData();
+            var station = $("#station").val();
+            var startDate = $("#date1").val().split(" ")[0].split("-");
+            var endDate = $("#date2").val().split(" ")[0].split("-");
+            var Parameter = $("#parameter").val();
 
-        $btn.button('reset');
+            var temp_data = []; // variable to store collective data before storing in global variable
+            var dates = [];
+            var date_num = 0;
+            var i = 0;
+
+
+            for (var d = new Date(startDate[0], startDate[1]-1, startDate[2]); d <= new Date(endDate[0], endDate[1]-1, endDate[2]); d.setDate(d.getDate() + 1)) {
+                console.log(d.getDate());
+                date_num++;
+                dates.push(new Date(d));
+            }
+
+             var temperatures;
+             var temp_date;
+
+            if(startDate == "" || endDate == "")
+             {
+                 alert("Please enter the complete form data!");
+                 $btn.button('reset');
+                 return;
+             }
+
+
+            function getDateData()
+            {
+                var day = dates[i].getDate();
+
+                if(day < 10)
+                        day = '0' + day;
+
+                var month = dates[i].getMonth();
+                month++;
+
+                if(month < 10)
+                        month = '0' + month;
+
+                var year = dates[i].getFullYear();
+                var temp_date = year + month + day;
+                var ans = {};
+                console.log(temp_date);
+
+
+                $.ajax({
+                      type: "GET",
+                      dataType: 'json',
+                      url: "http://api.wunderground.com/api/51e0f3ca75af02f9/history_" + temp_date + "/q/" + window.name_to_url[station] + ".json",
+                      data: {}
+                        })
+                    .done(function( data ) {
+
+                        var ans_t = {};
+
+                        if ('error' in data.response) {
+                            alert("Error! : " + data.response.error.description);
+                            $btn.button('reset');
+                            i = date_num + 2;
+                        }
+                        else if(data.history.date.pretty == "")
+                        {
+                            alert("Error! : TimeZone conflict");
+                            $btn.button('reset');
+                            i = date_num + 2;
+                        }
+                        else
+                        {
+                            ans = {};
+
+                            if(Parameter == "Temperature")
+                            {
+                                ans['MAX'] = data.history.dailysummary[0].maxtempm;
+                                ans['MIN'] = data.history.dailysummary[0].mintempm;
+                                ans['AVG'] = data.history.dailysummary[0].meantempm;
+                            }
+                            else if (Parameter == "Humidity")
+                            {
+                                ans['MAX'] = data.history.dailysummary[0].maxhumidity;
+                                ans['MIN'] = data.history.dailysummary[0].minhumidity;
+                                ans['AVG'] = data.history.dailysummary[0].humidity;
+                            }
+
+                            temp_date = dates[i].toISOString().slice(0,10).split('-');
+                            ans['DATE'] = day + "-" + month + "-" + year;
+
+                            temp_data.push(ans);
+
+                            console.log(i);
+
+                            if(i<date_num-1)
+                            {
+                                i++;
+                                getDateData();
+                            }
+                            else if(i == date_num-1)
+                            {
+                                window.station_data = temp_data;
+                                console.log(window.station_data);
+
+                                plotGraph(window.graph_type, Parameter);
+
+
+                                $(".title_station").text(station.toUpperCase());
+                                $(".title_params").text(Parameter.toUpperCase());
+                                $(".title_date").text(startDate[2] + "-" + startDate[1] + "-" + startDate[0] + " - " + endDate[2] + "-" + endDate[1] + "-" + endDate[0]);
+
+                                $btn.button('reset');
+                            }
+
+                        }
+
+                    })
+                    .fail(function() {
+                      alert( "error : could not fetch data! " );
+                      i = date_num + 2;
+                      $btn.button('reset');
+                    });
+            }
+
+            getDateData();
     });
 
 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -468,14 +636,120 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     console.log(target);
     console.log($(target).attr("name"));
 
-    var graph_type = $(target).attr("name");
+    window.graph_type = $(target).attr("name");
 
-    plotGraph(graph_type);
+    if (!$.isEmptyObject(window.station_data))
+        plotGraph(window.graph_type);
   //alert(target);
 });
 
+$("#form_station").on('submit', function(e){
+
+    e.preventDefault();
+
+    $("#error_box").hide();
+    $("#success_box").hide();
+
+    data_post = {};
+
+    data_post['name'] = $("#station_name").val();
+    data_post['id'] = $("#station_id").val();
+    data_post['url_suffix'] = $("#station_urlsuffix").val();
+    data_post['csrfmiddlewaretoken'] = "{{ csrf_token }}";
+
+    $.ajax({
+               type: "GET",
+               dataType: 'json',
+               url: "http://api.wunderground.com/api/51e0f3ca75af02f9/history_20160501/q/" +  $("#station_urlsuffix").val()+ ".json",
+               data: {}
+            })
+             .done(function( data ) {
+
+                 // CHECK IF SUFFIX_URL IS VALID
+
+                if ('error' in data.response)
+                {
+                     console.log("error url");
+                     $("#error_msg").text("ERROR! - Invalid URL prefix for given station ");
+                     $('#error_box').show();
+                }
+                else
+                {
+                    $.ajax({
+                            type: "POST",
+                            dataType: 'json',
+                            url: "add-station/",
+                            data: data_post
+                    })
+                            .done(function(data){
+
+                                    if(data.status == "failure")
+                                    {
+                                        $("#error_msg").text(data.message);
+                                        $("#error_box").show();
+                                    }
+                                    else if (data.status == "success")
+                                    {
+                                        $("#success_box").show();
+
+                                        $("#station").empty();
+
+                                        jQuery.each(data.data, function(){
+
+                                            $("#station").append('<option>' + this + '</option>');
+
+                                        });
+
+                                        window.name_to_url[ data_post['name'] ] = data_post['url_suffix'];
+
+                                    }
+
+                            })
+                            .fail(function(){
+                                $("#error_msg").text("ERROR! Failed to save the entry");
+                                $("#error_box").show();
+                            });
+                }
+
+             })
+             .fail(function() {
+                    $("#error_msg").text("ERROR! Failed to save the entry");
+                    $("#error_box").show();
+             });
+
+
+    /*
+    $.ajax({
+               type: "GET",
+               dataType: 'json',
+               url: "/weather-history",
+               data: get_data
+            })
+             .done(function( data ) {
+
+
+
+             })
+             .fail(function() {
+
+
+             }); */
+
+    //$('#success_modal').modal('show');
+
+});
+
+$('#addStation').on('hidden.bs.modal', function (e) {
+
+    $("#error_box").hide();
+    $("#success_box").hide();
+
+    $("#station_name").val("");
+    $("#station_id").val("");
+    $("#station_urlsuffix").val("");
+
+})
+
 </script>
 
-
-</body>
 </html>
