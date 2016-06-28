@@ -1,0 +1,10 @@
+1. Clone the repository to the local machine
+2. Go to the project directory (weatherMonitor)
+3. install the project requirements in a virtual environment or globally using the following command -
+	pip install -r requirements.txt
+4. run the command (for default port 8000)- 
+	python manage.py runserver 
+   or
+	python manage.py runserver port-no
+   for a different port to run the webapp on.
+5. Go to the url - 127.0.0.1:8000/weather-history/
