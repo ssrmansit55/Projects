@@ -11,12 +11,7 @@ from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 @csrf_protect
-def mainPanel(request):
-
-    stations_all = Station.objects.all()
-    stations = []
-    for y in stations_all:
-        stations.append(y.name)
+def login_view(request):
 
     if request.method == 'GET':
         if request.user.is_authenticated():
@@ -28,8 +23,7 @@ def mainPanel(request):
             if not flag:
                 return render_to_response('index.html', context_instance=RequestContext(request))
             else:
-                return render_to_response('main_page.html', {'res': stations_all, 'stations': sorted(stations)},
-                                          context_instance=RequestContext(request))
+                return HttpResponseRedirect('mainpage')
         else:
             return render_to_response('index.html', context_instance=RequestContext(request))
     elif request.method == 'POST':
@@ -51,9 +45,7 @@ def mainPanel(request):
                 user = authenticate(username=username, password=password)
                 login(request, user)
 
-
-                return render_to_response('main_page.html', {'res': stations_all, 'stations': sorted(stations)},
-                                          context_instance=RequestContext(request))
+                return HttpResponseRedirect('mainpage')
             else:
                 return render_to_response('index.html', {'msg': "Invalid Email/Password"},
                                           context_instance=RequestContext(request))
@@ -64,7 +56,16 @@ def mainPanel(request):
             return render_to_response('index.html', {'msg': "You need to login to access the page"},
                                       context_instance=RequestContext(request))
 
+@csrf_protect
+def mainPanel(request):
 
+    stations_all = Station.objects.all()
+    stations = []
+    for y in stations_all:
+        stations.append(y.name)
+
+    return render_to_response('main_page.html', {'res': stations_all, 'stations': sorted(stations)},
+                              context_instance=RequestContext(request))
 
 def addStation(request):
 
