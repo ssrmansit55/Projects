@@ -639,7 +639,7 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     window.graph_type = $(target).attr("name");
 
     if (!$.isEmptyObject(window.station_data))
-        plotGraph(window.graph_type);
+        plotGraph(window.graph_type, $("#parameter").val());
   //alert(target);
 });
 
